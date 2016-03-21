@@ -4,13 +4,21 @@ inp is what you want to match,
 returns [start,end] of match'''
     debug=False
     tokens=[""] #token array
+    incharclass=False
     for i in reg: #tokenize input
-        if tokens[-1]+i in [""]: #add to a compound token
-            tokens[-1]+=i
-        else: #next token
-            tokens+=[i]
+        if debug:print(tokens)
+        if incharclass:
+            if i=="]" and tokens[-1][-1]!="":
+                incharclass=False
+            else:
+                tokens[-1]+=i
+        else:
+            if i=="[":
+                incharclass=True
+                tokens+=""
+            else:
+                tokens+=i               
     tokens=tokens[1:]
-    if debug:print(tokens)
     tkindex=0 #position in token list
     inindex=0 #position in input
     start=0 #start of match
@@ -22,7 +30,7 @@ returns [start,end] of match'''
                     return []
                 inindex,tkindex=start,0
             else: #still in the text
-                if tokens[tkindex]==inp[inindex]:
+                if inp[inindex] in tokens[tkindex]:
                     tkindex+=1
                     inindex+=1
                 else:
